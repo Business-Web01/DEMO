@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Surprise</title>
+    <style>
+        :root {
+            --pink-light: #fce4ec;
+            --pink-dark: #f06292;
+            --red-main: #e91e63;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: url('e58e69a7882ab592c0f47879f91754c9.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 5vh;
+        }
+
+        /* Responsive Text Container */
+        #text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .line {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .letter {
+            display: inline-block;
+            padding: 10px 14px;
+            font-size: 2rem; /* Larger for mobile */
+            font-weight: 900;
+            background-color: white;
+            color: #d32f2f;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            transform: rotate(var(--rotation));
+            opacity: 0;
+            animation: fadeIn 0.1s forwards;
+            border: 1px solid #eee;
+        }
+
+        @media (min-width: 768px) {
+            .letter { font-size: 3.5rem; padding: 15px 20px; }
+        }
+
+        .letter:nth-child(even) { background-color: #f8bbd0; color: #b71c1c; }
+        .letter:nth-child(3n) { background-color: #ff80ab; color: white; }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* Button Styling */
+        #btn-love {
+            margin-top: 30px;
+            padding: 18px 50px;
+            font-size: 1.4rem;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 20;
+        }
+
+        .show-element { animation: fadeInBtn 1.5s ease forwards; }
+
+        @keyframes fadeInBtn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #btn-love::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer { 0% { left: -150%; } 100% { left: 150%; } }
+
+        /* Polaroid Layout */
+        .polaroid-container {
+            position: absolute;
+            bottom: 5%;
+            width: 100%;
+            height: 200px;
+            pointer-events: none;
+        }
+
+        .polaroid {
+            position: absolute;
+            width: 100px;
+            height: 120px;
+            background: white;
+            padding: 10px 10px 25px 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            border: 4px solid var(--frame-color);
+        }
+
+        .polaroid img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Placement & Rotations */
+        .left-group .p1 { --frame-color: #f06292; left: 10%; bottom: 20px; transform: rotate(-15deg); }
+        .left-group .p2 { --frame-color: #e91e63; left: 18%; bottom: 40px; transform: rotate(5deg); }
+        
+        .right-group .p3 { --frame-color: #f06292; right: 10%; bottom: 20px; transform: rotate(15deg); }
+        .right-group .p4 { --frame-color: #e91e63; right: 18%; bottom: 40px; transform: rotate(-5deg); }
+
+        /* Heart & Sparkle Effects */
+        .heart { position: absolute; font-size: 25px; pointer-events: none; animation: floatUp 2.5s ease-out forwards; }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-150px) scale(0); opacity: 0; }
+        }
+        .sparkle { position: absolute; width: 8px; height: 8px; background: #ffd700; border-radius: 50%; pointer-events: none; }
+    </style>
+</head>
+<body onclick="createHeart(event)">
+
+    <div id="text-container">
+        <div class="line" id="line1"></div>
+        <div class="line" id="line2"></div>
+    </div>
+    
+    <button id="btn-love" onclick="handleButtonClick(event)">CLICK ME</button>
+
+    <div class="polaroid-container">
+        <div class="left-group">
+            <div class="polaroid p1"><img src="image1.jpg" alt="Love 1"></div>
+            <div class="polaroid p2"><img src="image2.jpg" alt="Love 2"></div>
+        </div>
+        <div class="right-group">
+            <div class="polaroid p3"><img src="image3.jpg" alt="Love 3"></div>
+            <div class="polaroid p4"><img src="image4.jpg" alt="Love 4"></div>
+        </div>
+    </div>
+
+    <script>
+        const line1Text = "HAPPY VALENTINES DAY";
+        const line2Text = "MBALZ";
+        const l1Container = document.getElementById('line1');
+        const l2Container = document.getElementById('line2');
+
+        function typeLine(text, container, callback) {
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    if (text[i] === " ") {
+                        const space = document.createElement('div');
+                        space.style.width = "15px";
+                        container.appendChild(space);
+                    } else {
+                        const span = document.createElement('span');
+                        span.innerText = text[i];
+                        span.className = 'letter';
+                        span.style.setProperty('--rotation', (Math.random() * 12 - 6) + 'deg');
+                        container.appendChild(span);
+                    }
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    if(callback) callback();
+                }
+            }, 100);
+        }
+
+        function showExtras() {
+            document.getElementById('btn-love').classList.add('show-element');
+            document.querySelectorAll('.polaroid').forEach((p, index) => {
+                setTimeout(() => {
+                    p.classList.add('show-element');
+                }, index * 300);
+            });
+        }
+
+        function createHeart(e) {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'heart';
+            heart.style.left = e.clientX + 'px';
+            heart.style.top = e.clientY + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 2500);
+        }
+
+        function handleButtonClick(e) {
+            e.stopPropagation();
+            // Sparkle logic same as before...
+            window.location.href = "love letter.html";
+        }
+
+        window.onload = () => {
+            typeLine(line1Text, l1Container, () => {
+                setTimeout(() => {
+                    typeLine(line2Text, l2Container, showExtras);
+                }, 500);
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raindance Dedication</title>
+    <style>
+        :root {
+            --red-accent: #d32f2f;
+            --player-bg: #333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('e58e69a7882ab592c0f47879f91754c9.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        nav {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a { text-decoration: none; color: var(--red-accent); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; }
+
+        /* Popping Text Styles */
+        .pop-text {
+            position: absolute;
+            color: var(--red-accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 1px 1px 2px white;
+            animation: fadeInOutPop 7s forwards;
+        }
+
+        @keyframes fadeInOutPop {
+            0% { opacity: 0; transform: scale(0.5); }
+            10% { opacity: 1; transform: scale(1); }
+            90% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2); } /* Pop effect */
+        }
+
+        /* Player Container */
+        .player-frame {
+            margin-top: 40px;
+            width: 90%;
+            max-width: 380px;
+            background: var(--player-bg);
+            border-radius: 40px;
+            padding: 30px 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            text-align: center;
+            color: white;
+            z-index: 5;
+        }
+
+        .screen {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #intro-text {
+            color: var(--red-accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 2;
+            transition: opacity 1s;
+        }
+
+        .slideshow-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active { opacity: 1; }
+
+        /* The Play Button (Heart) */
+        .heart-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--red-accent);
+            transform: rotate(-45deg);
+            cursor: pointer;
+            margin: 30px auto;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .heart-btn::before, .heart-btn::after {
+            content: "";
+            position: absolute;
+            width: 60px; height: 60px;
+            background: var(--red-accent);
+            border-radius: 50%;
+        }
+        .heart-btn::before { top: -30px; left: 0; }
+        .heart-btn::after { left: 30px; top: 0; }
+        .heart-btn:active { transform: rotate(-45deg) scale(0.9); }
+
+        .floating-heart {
+            position: absolute;
+            color: #ff1744;
+            pointer-events: none;
+            animation: floatUp 3s forwards;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-120px); opacity: 0; }
+        }
+    </style>
+</head>
+<body onclick="spawnHearts(event)">
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="love letter.html">Letter</a>
+        <a href="puzzle.html">Quiz</a>
+        <a href="song.html">Song</a>
+    </nav>
+
+    <div class="player-frame">
+        <div class="screen">
+            <div id="intro-text">Happy Valentine's Day</div>
+            <div id="slideshow" class="slideshow-container">
+                <img src="img1.jpg" class="slide active">
+                <img src="img2.jpg" class="slide">
+                <img src="img3.jpg" class="slide">
+                <img src="img4.jpg" class="slide">
+                <img src="img5.jpg" class="slide">
+                <img src="img6.jpg" class="slide">
+                <img src="img7.jpg" class="slide">
+                <img src="img8.jpg" class="slide">
+                <img src="img9.jpg" class="slide">
+                <img src="img10.jpg" class="slide">
+            </div>
+        </div>
+
+        <div class="info">
+            <h2 style="margin: 0;">Raindance</h2>
+            <p style="opacity: 0.7;">Dave, Tems</p>
+        </div>
+
+        <div class="heart-btn" onclick="startExperience()"></div>
+        <p style="font-size: 0.8rem; opacity: 0.6;">Tap the heart to play your song</p>
+
+        <audio id="raindance-audio">
+            <source src="dave_raindance_ft._tems_mp3_3545.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <script>
+        function startExperience() {
+            // 1. Play the Song
+            const audio = document.getElementById('raindance-audio');
+            audio.play().catch(e => console.log("Audio play failed, check filename: ", e));
+
+            // 2. Start Slideshow Timer
+            setTimeout(() => {
+                document.getElementById('intro-text').style.opacity = '0';
+                document.getElementById('slideshow').style.opacity = '1';
+                runSlideshow();
+            }, 5000);
+        }
+
+        function runSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 6000); // Changes image every 6 seconds
+        }
+
+        function createPopText() {
+            const messages = ["I love you so much!", "I appreciate you so much!"];
+            const p = document.createElement('div');
+            p.className = 'pop-text';
+            p.innerText = messages[Math.floor(Math.random() * messages.length)];
+            
+            // Random responsive positioning
+            p.style.left = (Math.random() * 60 + 10) + "vw";
+            p.style.top = (Math.random() * 70 + 15) + "vh";
+            
+            document.body.appendChild(p);
+            
+            // Pop and reappear every 7 seconds
+            setTimeout(() => {
+                p.remove();
+                createPopText();
+            }, 7000);
+        }
+
+        function spawnHearts(e) {
+            const h = document.createElement('div');
+            h.innerHTML = '❤️';
+            h.className = 'floating-heart';
+            h.style.left = e.clientX + 'px';
+            h.style.top = e.clientY + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 3000);
+        }
+
+        // Initialize the dancing text on page load
+        window.onload = () => {
+            createPopText();
+            createPopText(); // Second one for extra appreciation!
+        };
+    </script>
+</body>
+</html>

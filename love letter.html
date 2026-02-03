@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Love Letter</title>
+    <style>
+        :root {
+            --nav-pink: #f06292; 
+            --red-accent: #d32f2f;
+            --envelope-color: #f8bbd0;
+            --flap-color: #f48fb1;
+            --paper-white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('e58e69a7882ab592c0f47879f91754c9.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Nav Bar with requested Pink */
+        nav {
+            width: 100%;
+            background: var(--nav-pink);
+            padding: 18px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover { opacity: 0.8; }
+
+        /* Shimmering Button Top Right */
+        .header-actions {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .view-full-btn {
+            padding: 14px 28px;
+            background: var(--red-accent);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            z-index: 10;
+        }
+
+        .view-full-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer { 0% { left: -150%; } 100% { left: 150%; } }
+
+        /* ENLARGED ENVELOPE AREA */
+        .envelope-wrapper {
+            position: relative;
+            margin-top: 40px;
+            width: 95%; /* Responsive width */
+            max-width: 600px; /* Large cap */
+            aspect-ratio: 3 / 2;
+            perspective: 1500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-color);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        /* Large Flap */
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            border-top: 200px solid var(--flap-color);
+            border-left: 300px solid transparent;
+            border-right: 300px solid transparent;
+            transform-origin: top;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+        }
+
+        /* Dynamic Flap Resize for Mobile */
+        @media (max-width: 630px) {
+            .envelope::before {
+                border-top-width: 32vw;
+                border-left-width: 47.5vw;
+                border-right-width: 47.5vw;
+            }
+        }
+
+        .envelope.open::before {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Vibrating Heart */
+        .heart-sticker {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            background: var(--red-accent);
+            transform: translate(-50%, -50%) rotate(-45deg);
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .heart-sticker::before, .heart-sticker::after {
+            content: "";
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: var(--red-accent);
+            border-radius: 50%;
+        }
+        .heart-sticker::before { top: -25px; left: 0; }
+        .heart-sticker::after { left: 25px; top: 0; }
+
+        .vibrate { animation: pulse 0.6s infinite ease-in-out; }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); }
+            50% { transform: translate(-50%, -50%) rotate(-45deg) scale(1.15); }
+        }
+
+        /* The Letter - Tucked inside */
+        .letter-content {
+            position: absolute;
+            bottom: 5%;
+            left: 5%;
+            width: 90%;
+            height: 85%;
+            background: var(--paper-white);
+            z-index: 3;
+            transition: transform 0.8s ease-in-out;
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .envelope.open .letter-content {
+            transform: translateY(-55%); /* Slides out and up */
+            z-index: 4;
+        }
+
+        /* Full Letter Overlay */
+        #full-letter-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .letter-paper-full {
+            width: 100%;
+            max-width: 500px;
+            background: #fff9f9;
+            padding: 50px 30px;
+            border: 4px dashed var(--red-accent);
+            position: relative;
+        }
+
+        .close-x {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 40px;
+            color: var(--nav-pink);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .letter-paper-full h1 { color: var(--red-accent); font-family: 'Georgia', serif; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Letter</a>
+        <a href="#">Quiz</a>
+        <a href="#">Song</a>
+    </nav>
+
+    <div class="header-actions">
+        <button class="view-full-btn" onclick="openModal(true)">VIEW LETTER IN FULL</button>
+    </div>
+
+    <div class="envelope-wrapper">
+        <div class="envelope" id="mainEnvelope">
+            <div class="letter-content">
+                <h2 style="color: var(--red-accent); font-family: serif;">A Love Letter</h2>
+                <p>To: Mbalz</p>
+                <p style="font-size: 0.8rem; color: #777;">(Click the "View Full" button to read the whole thing)</p>
+            </div>
+            <div class="heart-sticker vibrate" id="seal" onclick="openLetter()"></div>
+        </div>
+    </div>
+
+    <div id="full-letter-modal">
+        <div class="letter-paper-full">
+            <span class="close-x" onclick="openModal(false)">&times;</span>
+            <h1 style="text-align:center;">A LOVE LETTER</h1>
+            <div style="text-align: left; font-family: 'Courier New', Courier, monospace; margin-top: 30px;">
+                <p><strong>TO:</strong> Mbalz</p>
+                <p><strong>FROM:</strong> Your Valentine</p>
+                <hr style="border: 0.5px solid #ffcdd2; margin: 20px 0;">
+                <p>My Dearest Mbalz,</p>
+                <p>You're the person I want to talk to before I go to sleep and the person I want to wake up to every morning. This little link is a small piece of my heart for you.</p>
+                <p style="text-align: right; margin-top: 60px;">Forever Yours,<br>❤️</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLetter() {
+            const envelope = document.getElementById('mainEnvelope');
+            const seal = document.getElementById('seal');
+            
+            // Trigger animations
+            envelope.classList.add('open');
+            seal.style.opacity = '0';
+            setTimeout(() => seal.style.display = 'none', 500);
+        }
+
+        function openModal(show) {
+            document.getElementById('full-letter-modal').style.display = show ? 'flex' : 'none';
+        }
+    </script>
+</body>
+</html>
